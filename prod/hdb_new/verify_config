@@ -1,0 +1,274 @@
+#!/bin/bash 
+
+# https://stackoverflow.com/questions/4774054/reliable-way-for-a-bash-script-to-get-the-full-path-to-itself
+# SCRIPTPATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+CONFFILE=/usr/nextlabs/ems4h/config/DAE.conf
+
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+# https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+# In MacOSX, using `\x1B` instead of `\e`. `\033` would be ok for all platform
+# Important `\e` to begin escape sequences works in `zsh` but not in `sh` and not necessarily in `bash`, however `\033` works in all of them. If you want your script to work anywhere, you should preference `\033`
+# Red=0;31 Green=0;32
+#COLOR_LESS='\033[0m' # No Color or Text Reset. COLOR_OFF
+STATUS_TEST='\033[0;33m[    ]\033[0m'
+
+# https://stackoverflow.com/questions/11283625/overwrite-last-line-on-terminal
+function echo_status() {
+	echo -en "\033[1A\033[0K\r"
+	#[ -z "$2" ] && echo -e "\033[0;31m[fail]\033[0m $1..." || echo -e "\033[0;32m[pass]\033[0m $1..."
+	if [ -z "$1" ]; then
+		echo -e "\033[0;31m[fail]\033[0m $TESTING_ITEM"
+		return 1
+	else
+		echo -e "\033[0;32m[pass]\033[0m $TESTING_ITEM"
+		return 0
+	fi
+}
+
+# $1:string error message
+function echo_fail() {
+	echo -en "\033[1A\033[0K\r"
+	echo -e "\033[0;31m[fail]\033[0m $TESTING_ITEM"
+	echo -e "\033[1;31mERROR:\033[0m $1";
+	exit 1
+}
+
+
+# $1:string the config field name prefix, i.e. jpc and cc
+# result code or exit status is 0 if the input is encrypted
+function is_encrypted() {
+	# an encrypted password string, whose length is multiple of 16. e.g. 30549E21561286B17FA14AC8A42EC450
+	# https://stackoverflow.com/questions/6318809/how-do-i-grab-an-ini-value-within-a-shell-script/25834149#25834149
+	# pwd=${pwd/$'\r'} to remove the ending CR (i.e. \r, 0x0d), or echo "==${pwd}@@"; echo ${#pwd} unexpected
+	local pwdname=$1pwd
+	local pwd=$(sed -n -e "s/^\s*$pwdname\s*=\s*\([^\r]*\)\r*$/\1/p" $CONFFILE)
+
+	TESTING_ITEM="decrypting $pwdname"
+	echo -e "$STATUS_TEST $TESTING_ITEM"
+
+	#https://unix.stackexchange.com/questions/423389/compare-bash-variable-to-see-if-divisible-by-5/423398#423398
+	#The succeess of the command is determined by the result of the expression: the command succeeds if the expression is true; the command fails otherwise. (expressions between (( and )))
+	#http://www.giocc.com/why-not-use-bash-for-algorithmic-interviews.html
+	#https://www.tldp.org/LDP/abs/html/string-manipulation.html (String Length)
+
+	# pwd=p; (( ${#pwd} % 16 )); echo $? => 0
+	# unset pwd; (( ${#pwd} % 16 )); echo $? => 1
+	# pwd=p; ! (( ${#pwd} % 16 )) && echo multiple of 16 => echo nothing
+	# unset pwd; ! (( ${#pwd} % 16 )) && echo multiple of 16 => echo expected
+	
+	if ! (( ${#pwd} % 16 )) && [[ $pwd =~ [0-9A-F]+ ]]; then
+		local plain_pwd=$(/usr/nextlabs/ems4h/bin/encrypttool d $pwd)
+		if [ ! -z "plain_pwd" ]; then
+			echo_status 0
+			declare -g $pwdname=$plain_pwd
+			declare -g $1user=$(sed -n -e "s/^\s*$1user\s*=\s*\(.*\)\r*$/\1/p" $CONFFILE)
+			declare -g $1host=$(sed -n -e "s/^\s*$1host\s*=\s*\(.*\)\r*$/\1/p" $CONFFILE)
+			declare -g $1port=$(sed -n -e "s/^\s*$1port\s*=\s*\(.*\)\r*$/\1/p" $CONFFILE)
+		else
+			echo_status # fail
+		fi
+	else
+		echo_fail "unencrypted $pwdname"
+	fi
+}
+
+function test_access_token_server() {
+	if test "$1" == "jpc"; then
+	TESTING_ITEM="checking jpcuser and jpcpwd"
+	else
+	TESTING_ITEM="checking ccuser and ccpwd"
+	fi
+
+	
+	echo -e "$STATUS_TEST $TESTING_ITEM"
+	#https://stackoverflow.com/questions/1955505/parsing-json-with-unix-tools
+	response=$(curl -k --silent --location --request POST "$cchost:$ccport/cas/token" \
+		--header 'Content-Type: application/x-www-form-urlencoded' \
+		--data-urlencode 'grant_type=client_credentials' \
+		--data-urlencode "client_id=$2" \
+		--data-urlencode "client_secret=$3" \
+		--data-urlencode 'expires_in=36000')
+	local res=$?
+	if test "$res" != '0'; then
+	   echo_fail "the curl command failed with: $res, please check cchost and ccport"
+	fi
+	#echo "access_token=$token"
+	if test "$response" == '{"error":"invalid_client"}'; then
+	   if test "$1" == "jpc"; then
+	      echo_fail "invalid jpcuser or jpcpwd"
+	   else
+	      echo_fail "invalid ccuser or cccpwd"
+	   fi
+	   
+	fi
+	#token=$(echo $response | python3 -c "import sys, json; print(json.load(sys.stdin)['access_token'])" 2>/dev/null)
+	#token=$(echo $response | sed -n -e 's/.*"access_token":"\([^"]*\)".*/\1/p')
+	echo_status exit 1
+}
+
+function test_jpc_pdp_server() {
+	TESTING_ITEM="connecting to JPC server"
+	local LONG_JSON=$(cat <<EOT
+{
+	"Request": {
+		"ReturnPolicyIdList": true,
+		"Category": [{
+			"CategoryId": "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject",
+			"Attribute": [{
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:subject:subject-id",
+				"Value": "S-1-5-21-2018228179-1005617703-974104760-1200",
+				"IncludeInResult": false
+			}, {
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:subject:name",
+				"Value": "abraham.lincoln",
+				"DataType": "http://www.w3.org/2001/XMLSchema#string",
+				"IncludeInResult": false
+			}]
+		}, {
+			"CategoryId": "urn:oasis:names:tc:xacml:3.0:attribute-category:resource",
+			"Attribute": [{
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:resource:resource-id",
+				"Value": "\\\\10.23.56.28\\shared\\file",
+				"DataType": "http://www.w3.org/2001/XMLSchema#anyURI",
+				"IncludeInResult": false
+			}, {
+				"AttributeId": "urn:nextlabs:names:evalsvc:1.0:resource:resource-type",
+				"Value": "EMFILES",
+				"DataType": "http://www.w3.org/2001/XMLSchema#anyURI",
+				"IncludeInResult": false
+			}, {
+				"DataType": "http://www.w3.org/2001/XMLSchema#string",
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:resource:url",
+				"IncludeInResult": false,
+				"Value": "\\\\10.23.56.28\\shared\\file"
+			}, {
+				"AttributeId":"urn:oasis:names:tc:xacml:1.0:resource:ip",
+				"Value": "221.226.147.146",
+				"DataType": "http://www.w3.org/2001/XMLSchema#ipAddress",
+				"IncludeInResult": false
+			}]
+		}, {
+			"CategoryId": "urn:oasis:names:tc:xacml:3.0:attribute-category:action",
+			"Attribute": [{
+				"AttributeId": "urn:oasis:names:tc:xacml:1.0:action:action-id",
+				"Value": "VIEW",
+				"DataType": "http://www.w3.org/2001/XMLSchema#string",
+				"IncludeInResult": false
+			}]
+		},
+		{
+			"CategoryId": "urn:oasis:names:tc:xacml:3.0:attribute-category:environment",
+			"Attribute": [
+				{
+					"AttributeId": "urn:oasis:names:tc:xacml:1.0:environment:dont-care-acceptable",
+					"Value": "yes",
+					"IncludeInResult": false
+				}
+			]
+		}]
+	}
+}
+EOT
+)
+
+	echo -e "$STATUS_TEST $TESTING_ITEM"
+	# https://stackoverflow.com/questions/12583930/use-pipe-for-curl-data -d @-
+	# `curl -x http://proxy_server:proxy_port --proxy-user username:password -L http://url` to use fiddler as a proxy server. http://127.0.0.1:8888/
+	response=$(curl -kL --silent $jpchost:$jpcport/dpc/authorization/pdp \
+		-H "Authorization: Bearer $token" \
+		-H "Content-Type: application/json" \
+		-H "Service: EVAL" \
+		-H "Version: 1.0" \
+		-H "cache-control: no-cache" \
+		--data "$LONG_JSON")
+	local res=$?
+	if test "$res" != '0'; then
+	   echo_fail "the curl command failed with: $res, please check host and port"
+	fi
+	#echo "JPCResponse=$response"
+	# response example: {"Response":{"Result":[{"Decision":"NotApplicable","Status":{"StatusMessage":"Not Applicable","StatusCode":{"Value":"urn:oasis:names:tc:xacml:1.0:status:ok"}},"Obligations":[]}]}}
+	response=$(echo $response | python3 -c "import sys, json; print(json.load(sys.stdin)['Response'])" 2>/dev/null)
+	echo_status "connecting to JPC server" $response || exit 1
+}
+
+function test_web_console_server() {
+	TESTING_ITEM='connecting to Web Console server'
+	echo -e "$STATUS_TEST $TESTING_ITEM"
+	#https://curl.haxx.se/docs/http-cookies.html Cookies with curl the command line tool
+	local cookiefile=/tmp/webconsole_cookies.txt
+	local response=$(curl -kL --silent $cchost:$ccport/console/ -c $cookiefile)
+	local res=$?
+	if test "$res" != '0'; then
+	   echo_fail "the curl command failed with: $res, please check host and port"
+	fi
+	#https://superuser.com/questions/86340/linux-command-to-repeat-a-string-n-times
+	#https://stackoverflow.com/questions/8467424/echo-newline-in-bash-prints-literal-n
+	#eg_response=$(printf '<input name="csrfToken" value="0-9a-f-36"/>\n%.0s' {1..2}); echo "$response" or echo $"$response"
+	#response='<input name="csrfToken" value="0-9a-f-36-1"/><input name="csrfToken" value="0-9a-f-36-2"/>'
+	local csrfToken=$(echo "$response" | sed -ne 's/.*name="csrfToken" value="\([0-9a-f-]*\)".*/\1/p' | head -n1)
+	local execution=$(echo "$response" | sed -ne 's/.*name="execution" value="\([[:alnum:]=_-]*\)".*/\1/p' | head -n1)
+	# echo "$execution" && echo "$csrfToken"
+	if [ ! -z "$csrfToken" ] && [ ! -z "$execution" ]; then
+		#https://stackoverflow.com/questions/10060098/getting-only-response-header-from-http-post-using-curl
+		#curl -x http://127.0.0.1:8888/ curl -sSL -D - www.acooke.org -o /dev/null
+		local headers=$(curl -ksS -D - -X POST $cchost:$ccport/cas/login \
+			--header 'Content-Type: application/x-www-form-urlencoded' \
+			-b $cookiefile -o /tmp/webconsole_login_response.html \
+			--data-urlencode "username=$ccuser" \
+			--data-urlencode "password=$ccpwd" \
+			--data-urlencode "csrfToken=$csrfToken" \
+			--data-urlencode '_eventId=submit' \
+			--data-urlencode 'submit=LOGIN' \
+			--data-urlencode 'geolocation=' \
+			--data-urlencode "execution=$execution")
+		#echo -e "\033[1;30mLOGIN response headers:\033[0m\n$headers"
+		local res=$?
+		if test "$res" != '0'; then
+		   echo_fail "the curl command failed with: $res, please check host and port"
+		fi
+		#HTTP/1.1 401
+		#<div id="msg" class="errors">
+		#	<span>Invalid credentials.</span>
+		#</div>
+		#echo -e 'HTTP/1.1 100 Continue\n\nHTTP/1.1 401\r\nAccess-Control-Allow-Origin: *\r\n' | grep -oh '^HTTP/1.1 402'; echo $?
+		echo "$headers" | grep -q '^HTTP/1.1 401' && echo_fail "Invalid credentials"
+		response=$(echo "$headers" | sed -ne 's/^Location:.*ticket=\([^\r]*\)\r/\1/p')
+	else
+		echo_fail "unsupported CC Web Console"
+	fi
+	#echo $response
+	echo_status $response || exit 1
+}
+
+function test_schema_name()
+{
+	TESTING_ITEM='checking schema name'
+	echo -e "$STATUS_TEST $TESTING_ITEM"
+
+	schema_name=$(sed -n -e "s/^\s*schemaname\s*=\s*\([^\r]*\)\r*$/\1/p" $CONFFILE)
+	if test  -z $schema_name ; then
+		   echo_fail "schemaname is empty."
+	elif test "$schema_name" == "SCHEMA_NAME" ; then
+	       echo_fail "schemaname not been changed."
+	else 
+	       echo_status exit 1
+	fi
+}
+
+
+echo 'security checking...'
+
+is_encrypted jpc
+is_encrypted cc
+
+# https://stackoverflow.com/questions/3601515/how-to-check-if-a-variable-is-set-in-bash
+if [ -z ${jpcpwd+x} ] || [ -z ${ccpwd+x} ]; then
+	exit 1
+fi
+
+#echo $jpchost && echo $jpcport && echo $ccuser && echo $ccpwd
+
+test_access_token_server jpc $jpcuser $jpcpwd
+test_access_token_server cc $ccuser $ccpwd
+test_jpc_pdp_server
+test_schema_name

@@ -1,0 +1,12 @@
+# Produce version information
+#
+# Description:
+#	This file should be included in top-level Makefile 
+# http://sharepoint/sites/support/release/Lists/Current%00Releases/AllItems.aspx
+
+
+VERSION_PRODUCT_EMDB		= EM_SAP_ERP_Data_Access
+VERSION_MAJOR_EMDB			= 2
+VERSION_MINOR_EMDB			= 0
+VERSION_MAINTENANCE_EMDB	= 0
+VERSION_PATCH_EMDB			= 0

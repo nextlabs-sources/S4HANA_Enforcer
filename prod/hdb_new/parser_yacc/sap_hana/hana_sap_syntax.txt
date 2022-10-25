@@ -1,0 +1,391 @@
+CMAKELISTS:
+# ----bison and flex
+find_package(BISON)
+find_package(FLEX)
+BISON_TARGET(ttest_parser sqlparser_hana.yacc sqlparser_hana_bison.cpp       DEFINES_FILE sqlparser_hana_bison.h )
+FLEX_TARGET(ttest_lexer sqlparser_hana.lex sqlparser_hana_flex.cpp         DEFINES_FILE sqlparser_hana_flex.h )
+add_library(myparser ${BISON_ttest_parser_OUTPUTS}   ${FLEX_ttest_lexer_OUTPUTS}   )
+ADD_FLEX_BISON_DEPENDENCY(ttest_lexer ttest_parser)
+
+
+
+#define YYSTYPE         HANA_STYPE
+#define YYLTYPE         HANA_LTYPE
+
+
+SAP select statement
+
+
+
+sap_deceimal
+sap_integer
+sap_string
+sap_uint
+
+
+ //------------------------------------------select_statement--------------------------------------------------------------
+ 
+ select_statement : with_clause subquery for_update hint_clause 
+ select_statement : with_clause subquery time_travel hint_clause 
+ select_statement : with_clause subquery  hint_clause 
+ 
+ select_statement : with_clause ( subquery ) for_update hint_clause 
+ select_statement : with_clause ( subquery ) for_xml hint_clause 
+ select_statement : with_clause ( subquery ) time_travel hint_clause 
+ select_statement : with_clause ( subquery ) hint_clause 
+ 
+
+ 
+ //---------------------------------------------with_clause-------------------------------------------------------------
+
+with_clause : /*empty*/
+with_clause : WITH with_list_element
+with_list_element : with_element
+with_list_element : with_element , with_list_element
+with_element : query_name column_list_clause as ( subquery )
+with_element : query_name  as ( subquery )
+column_list_clause : ( column_name_list )
+column_name_list : column_name
+column_name_list : column_name , column_name_list
+column_name : identifier
+
+
+ //---------------------------------------------for_update-------------------------------------------------------------
+
+for_update : FOR UPDATE
+for_update : FOR UPDATE OF column_list_clause
+for_update : FOR UPDATE OF column_list_clause wait_nowait
+for_update : FOR UPDATE wait_nowait
+
+wait_nowait : NOWAIT
+wait_nowait : WAIT unsigned_integer
+
+//---------------------------------------------for_xml---------------------------------------------------------------
+
+for_xml : FOR XML 
+for_xml : FOR XML ( option_string_list ) 
+for_xml : FOR XML returns_clause 
+for_xml : FOR XML ( option_string_list ) returns_clause
+option_string_list : basic_string_expression
+option_string_list : basic_string_expression , option_string_list
+returns_clause : RETURNS return_type
+return_type : VARCHAR ( sap_integer )
+return_type : NVARCHAR ( sap_integer )
+return_type : CLOB
+return_type : NCLOB 
+
+basic_string_expression : sap_string = sap_string /* need extension */
+
+
+
+//---------------------------------------------time_travel---------------------------------------------------------------
+
+time_travel : AS OF  COMMIT ID <commit_id> 
+time_travel : AS OF  UTCTIMESTAMP <timestamp> 
+
+commit_id : sap_uint /* need check */
+timestamp : sap_string /* need check */
+
+ 
+ ///-------------------------------------------hint_clause---------------------------------------------------------------
+ hint_clause : /*empty*/
+ hint_clause : WITH HINT ( hint_element_list )
+ hint_element_list : hint_element
+ hint_element_list : hint_element ,  hint_element_list
+ hint_element : hint /* this is hint model */
+ hint_element : hint_with_parameters
+ hint : identifier
+ hint_with_parameters : identifier ( hint_param_list )
+ hint_param_list : hint_param
+ hint_param_list : hint_param , hint_param_list
+ hint_param : sap_integer
+ hint_param : identifier
+ 
+
+ 
+  
+ subquery : select_clause from_clause where_clause group_by_clause  having_clause set_operator_clause order_by_clause limit
+
+ 
+ set_operator_clause : /*empty*/
+ set_operator_clause : set_operator subquery
+ set_operator_clause_list : set_operator_clause
+ set_operator_clause_list : set_operator_clause set_operator_clause_list 
+ set_operator : UNION distinct_clause
+ set_operator : INTERSECT
+ set_operator : EXCEPT
+ set_operator : INTERSECT DISTINCT
+ set_operator : EXCEPT DISTINCT
+
+ 
+ 
+ //-----------------------------------------------select_clause-------------------------------------------------------
+ select_clause : SELECT top_clause distinct_clause select_list
+ top_clause : /*empty*/
+ top_clause : TOP sap_integer
+ distinct_clause : /*empty*/
+ distinct_clause : ALL | DISTINCT
+ select_list : select_item
+ select_list : select_item ,  select_list
+ 
+ select_item : tb_name . *  as_clause
+ select_item : * as_clause
+ select_item : select_expression as_clause
+ 
+ as_clause : /*empty*/
+ as_clause : AS column_alias
+ column_alias : identifier
+ 
+ 
+ select_expression : case_expression
+ select_expression : function_expression
+ select_expression : aggregate_expression
+ select_expression : ( select_expression )
+ select_expression : ( subquery )
+ select_expression : - select_expression
+ select_expression : select_expression operator select_expression
+ 
+ select_expression : constant
+ select_expression : column_name
+ select_expression : qualifier_col column_name
+
+ 
+ constant : sap_string | sap_integer |sap_deceimal
+ qualifier_col : identifier . identifier . identifier .
+ qualifier_col : identifier . identifier .
+ qualifier_col : identifier . 
+ qualifier_col : /*empty*/
+ column_name : identifier
+ 
+ operator : + | - | * | /
+
+ function_expression : function_reference
+ 
+aggregate_expression : COUNT(*) 
+	| COUNT ( DISTINCT expression_list ) 
+	| agg_name (  distinct_clause expression ) 
+	| string_agg 
+
+string_agg : 	STRING_AGG ( expression , delimiter order_by_clause ) 
+string_agg : 	STRING_AGG ( expression order_by_clause ) 
+delimiter : sap_string
+agg_name : CORR | CORR_SPEARMAN | COUNT | MIN | MEDIAN | MAX | SUM | AVG | STDDEV | VAR  | STDDEV_POP | VAR_POP | STDDEV_SAMP | VAR_SAMP
+
+ 
+ //------------------------------------------------case_expression-----------------------------------------------------
+case_expression : simple_case_expression
+case_expression : search_case_expression
+
+simple_case_expression : CASE expression  simple_case_when_list  ELSE expression    END
+simple_case_when : WHEN expression THEN expression
+simple_case_when_list : simple_case_when
+simple_case_when_list : simple_case_when simple_case_when_list
+
+search_case_expression :  CASE search_case_when_list ELSE expression END
+search_case_when : WHEN condition THEN expression
+search_case_when_list : search_case_when
+search_case_when_list : search_case_when search_case_when_list
+ 
+condition : condition OR condition
+condition : condition AND condition
+condition : NOT condition
+condition : ( condition ) 
+condition : predicate
+
+//----------------------------------------------predicate---------------------------------------------
+ predicate : between_predicate| 
+				exists_predicate | 
+				in_predicate | 
+				like_predicate | 
+				MEMBER_predicate |
+				null_predicate |
+				contains_predicate
+				
+is_or_not : /*EMPTY*/
+is_or_not : NOT				
+between_predicate : expression is_or_not BETWEEN expression AND expression
+
+exists_predicate : is_or_not EXISTS ( subquery )
+
+in_predicate : expression is_or_not IN expression_list
+in_predicate : expression is_or_not IN subquery
+expression_list : expression
+expression_list : expression , expression_list
+
+like_predicate : expression is_or_not LIKE pattern_expression ESCAPE escape_expression
+like_predicate : expression is_or_not LIKE pattern_expression 
+pattern_expression : sap_string
+escape_expression : sap_string
+
+MEMBER_predicate : expression is_or_not  MEMBER OF array_value_expression
+array_value_expression : column_name /*need extension*/
+
+null_predicate : expression IS is_or_not NULL
+
+contains_predicate : CONTAINS ( contains_columns , search_string  )
+contains_predicate : CONTAINS ( contains_columns , search_string , search_specifier )
+contains_columns> :
+ * 
+ | column_name
+ | ( column_name_list )
+search_string : sap_string
+search_specifier : search_type opt_search_specifier2_list
+search_type : 
+			exact_search |
+			fuzzy_search |
+			linguistic_search
+
+exact_search : EXACT
+exact_search : EXACT ( additional_params )
+additional_params : sap_string
+
+
+fuzzy_search : FUZZY
+fuzzy_search : FUZZY fuzzy_params_list 
+fuzzy_params_list : ( fuzzy_params )
+fuzzy_params_list : ( fuzzy_params ) , fuzzy_params_list
+fuzzy_params : sap_deceimal
+fuzzy_params : sap_deceimal , additional_params
+fuzzy_params : NULL , additional_params
+
+
+linguistic_search : LINGUISTIC
+linguistic_search : LINGUISTIC ( additional_params )
+
+opt_search_specifier2_list : /*empty*/  /* need extension */
+opt_search_specifier2_list : search_specifier2_list
+search_specifier : search_specifier2_list
+
+search_specifier2_list : search_specifier2
+search_specifier2_list : search_specifier2 , search_specifier2_list
+
+search_specifier2 : weights
+search_specifier2 : language
+weights : WEIGHT ( float_const_list )
+float_const_list : sap_deceimal
+float_const_list : sap_deceimal , float_const_list
+language : LANGUAGE ( string_const )	
+				
+
+//--------------------------------------from_clause------------------------------------------------
+
+from_clause : FROM from_expression_list
+from_expression_list : from_expression
+from_expression_list : from_expression , from_expression_list
+
+from_expression :  table_ref 
+ | subquery as_clause
+ | joined_table_clause
+ | collection_derived_table
+ | associated_table_expression  //nonsupport
+ | function_reference
+ | JSON_collection_table //nonsupport
+ | : table_variable //nonsupport
+ 
+
+associated_table_expression : /* need extension */ 
+JSON_collection_table : /* need extension */
+table_variable : /* need extension */
+
+table_ref : table_clause  partition_restriction as_clause tablesample_clause
+table_clause : qualifier_tb table_name
+qualifier_tb : identifier . identifier . 
+qualifier_tb : identifier . 
+qualifier_tb : /* empty */
+table_name : identifier
+
+partition_restriction : /*empty*/
+partition_restriction : PARTITION ( partition_number_list )
+partition_number_list : partition_number
+partition_number_list : partition_number , partition_number_list
+partition_number : sap_uint
+
+tablesample_clause : /*empty*/
+tablesample_clause :  TABLESAMPLE  ( sample_size )
+tablesample_clause :  TABLESAMPLE SYSTEM ( sample_size )
+tablesample_clause :  TABLESAMPLE BERNOULLI  ( sample_size )
+sample_size : sap_integer
+
+//-----
+joined_table_clause : joined_table
+joined_table_clause : joined_table_clause join_type JOIN table_ref ON predicate
+joined_table_clause : joined_table_clause CROSS JOIN table_ref
+
+joined_table : table_ref join_type JOIN table_ref ON predicate
+joined_table : table_ref  CROSS JOIN table_ref
+join_type : INNER
+	| LEFT OUTER
+	| RIGHT OUTER
+	| FULL OUTER
+
+//------collection_derived_table
+collection_derived_table :   UNNEST ( collection_value_expression_list ) with_ordinality AS table_alias column_name_list_p
+table_alias : column_alias
+column_name_list_p : ( column_name_list )
+column_name_list_p : /*empty*/
+with_ordinality : WITH ORDINALITY
+with_ordinality : /*empty*/
+collection_value_expression_list : collection_value_expression
+collection_value_expression_list : collection_value_expression , collection_value_expression_list
+
+//-----
+function_reference : function_name ( function_param_list )
+function_name : qualifier_tb function
+function : identifier
+//<function_reference> ::= <function_name>( <proc_arg_list> | <opt_parameter_key_value_list> )
+function_param_list : expression_list /* need check */
+
+//-------------------------------------------------------where_clause--------------------------------------------------------------
+where_clause : /*empty*/
+where_clause : WHERE condition
+   
+predicate : comparison_predicate
+comparison_predicate : expression comp_operator expression
+comparison_predicate : expression comp_operator comp_model ( expression_list )
+comp_operator : = | != | <> | > | < | >= | <= 
+comp_model : ANY | SOME | ALL
+
+expression : select_expression /* need check */
+
+//-------------------------------------------------------group_by_clause ----------------------------------------------------------
+group_by_clause : /*empty*/
+group_by_clause : GROUP BY group_by_expression_list 
+group_by_expression_list : group_item
+group_by_expression_list : group_item , group_by_expression_list
+group_item : expression
+group_item : rollup_expression 
+group_item : cube_expression
+group_item : grouping_expression 
+
+grouping_expression : GROUPING SETS /* nedd extension */ ( grouping_sets_params )
+grouping_sets_params : ( column_name_list )
+grouping_sets_params : ( column_name_list ) , grouping_sets_params
+
+rollup_expression : ROLLUP ( column_name_list ) 
+cube_expression : CUBE ( column_name_list ) 
+
+//-------------------------------------------------------having_clause------------------------------------------------------------
+having_clause : /*empty*/
+having_clause : HAVING condition
+ 
+ //------------------------------------------------------order_by_clause----------------------------------------------------------
+ order_by_clause : /*empty*/
+ order_by_clause : ORDER BY order_by_expression
+ order_by_expression : expression asc_desc nulls
+ order_by_expression : position asc_desc nulls
+ asc_desc : /*empty*/ | ASC | DESC
+ nulls : /*empty*/ | NULLS FIRST | NULLS LAST
+ position : sap_uint
+ 
+ //-------------------------------------------------------limit-------------------------------------------------------------------
+limit : /*empty*/
+limit : LIMIT sap_uint offset_clause
+offset_clause : /*empty*/
+offset_clause : OFFSET sap_uint
+
+
+
+// UPSERT  <table_name> [ <column_list_clause> ] { <value_list_clause> [ WHERE <condition> | WITH PRIMARY KEY ] | <subquery> }
+ //  REPLACE <table_name> [ <column_list_clause> ] { <value_list_clause> [ WHERE <condition> | WITH PRIMARY KEY ] | <subquery> }
+
+ 

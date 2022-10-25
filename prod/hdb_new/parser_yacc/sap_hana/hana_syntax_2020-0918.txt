@@ -1,0 +1,770 @@
+select customer_id from "HXE"."ADT"."STP" FOR SYSTEM_TIME AS OF '2020-06-16 06:25:49.90';
+sql script syntax error at(0,46): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."STP" FOR SYSTEM_TIME From '2020-06-16 06:25:49.90' To '2020-06-16 06:25:50.00';
+sql script syntax error at(0,46): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."STP" FOR SYSTEM_TIME Between	 '2020-06-16 06:25:49.90' And '2020-06-16 06:25:50.00';
+sql script syntax error at(0,46): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<from_clause> ::= FROM <table_expression> [, <table_expression> ...]
+
+<table_expression> ::= 
+ <table_ref>  
+ 
+<table_ref> ::= <table_name> 
+ [ <for_system_time> ]
+
+<for_system_time> ::= <as_of_spec> | <from_to_spec> | <between_spec>
+
+<as_of_spec> ::= FOR SYSTEM_TIME AS OF '<timestamp1>'
+<from_to_spec> ::= FOR SYSTEM_TIME FROM '<timestamp1>' TO '<timestamp2>'
+<between_spec> ::= FOR SYSTEM_TIME BETWEEN '<timestamp1>' AND '<timestamp2>'
+---------------------------------------------------------------------------------------
+
+
+
+select customer_id from "HXE"."ADT"."ATP" FOR APPLICATION_TIME AS OF '2020-06-12 17:37:12';
+sql script syntax error at(0,46): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_ref> ::= <table_name> 
+ [ <for_application_time_period> ]
+ 
+<for_application_time_period> ::= FOR APPLICATION_TIME AS OF '<timestamp>'
+---------------------------------------------------------------------------------------
+
+
+
+select customer_id from "HXE"."ADT"."PTA" PARTITION (1);
+sql script syntax error at(0,42): syntax error, unexpected PARTITION, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."PTA" PARTITION (1,2,3);
+sql script syntax error at(0,42): syntax error, unexpected PARTITION, expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_ref> ::= <table_name> 
+ [ <partition_restriction> ] 
+ 
+<partition_restriction> ::= PARTITION ( <partition_number> [ {, <partition_number> }...] )
+
+<partition_number> ::= <unsigned_integer>
+---------------------------------------------------------------------------------------changed '"HXE"."ADT"."PTA" PARTITION (1,2,3)' to '"HXE"."ADT"."CUSTOMER1"'
+
+
+
+select customer_id from "HXE"."ADT"."CUSTOMER1" as b TABLESAMPLE BERNOULLI (1);
+sql script syntax error at(0,53): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."CUSTOMER1" as b TABLESAMPLE BERNOULLI (50);
+sql script syntax error at(0,53): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."CUSTOMER1" as b TABLESAMPLE SYSTEM (50);
+sql script syntax error at(0,53): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+select customer_id from "HXE"."ADT"."CUSTOMER1" as b TABLESAMPLE BERNOULLI (100);
+sql script syntax error at(0,53): syntax error, unexpected NAME, expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_ref> ::= <table_name> 
+ [ [ AS ] <table_alias> ] 
+ [ <tablesample_clause> ]
+
+<table_alias> ::= <identifier>
+
+<tablesample_clause> ::= TABLESAMPLE [ BERNOULLI | SYSTEM ] ( <sample_size> )
+
+<sample_size> ::= <exact_numeric_literal>
+---------------------------------------------------------------------------------------changed ' TABLESAMPLE BERNOULLI (100)' to ''
+
+
+
+
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=any(b.customer_id);
+sql script syntax error at(0,99): syntax error, unexpected NAME, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=some(b.customer_id);
+sql script syntax error at(0,100): syntax error, unexpected NAME, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=all(b.customer_id);
+sql script syntax error at(0,99): syntax error, unexpected NAME, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=any(16,17);
+sql script syntax error at(0,99): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=some(16,17);
+sql script syntax error at(0,100): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.customer_id>=all(16,17);
+sql script syntax error at(0,99): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON (a.customer_id,a.C_CUSTKEY) = any((1,'plmkijasdt7777asda'));
+sql script syntax error at(0,115): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON (a.customer_id,a.C_CUSTKEY) <> any((1,'plmkijasdt7777asda'));
+sql script syntax error at(0,116): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON (a.customer_id,a.C_CUSTKEY) != any((1,'plmkijasdt7777asda'));
+sql script syntax error at(0,116): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON (a.customer_id,a.C_CUSTKEY) != any((1,'plmkijasdt7777asda')), "HXE"."ADT"."CUSTOMER1" as a JOIN "HXE"."ADT"."CUSTOMER1" as b ON (a.customer_id,a.C_CUSTKEY) != any((1,'plmkijasdt7777asda'));
+sql script syntax error at(0,116): syntax error, unexpected INTNUM, expecting '(' or SELECT or WITH
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_ref> ::= <joined_table> 
+
+<joined_table> ::= 
+ <table_expression> JOIN <table_expression> ON <predicate>
+ 
+<predicate> ::= 
+ <comparison_predicate>
+ 
+<comparison_predicate> ::= 
+ <table_expression> { = | != | <> | > | < | >= | <= } [ ANY | SOME | ALL ] ( { <table_expression_list> } )
+ 
+<table_expression_list> ::= <table_expression> [, <table_expression> [,... ] ]
+---------------------------------------------------------------------------------------
+
+
+
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER MANY TO MANY JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected MANY, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER MANY TO ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected MANY, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER MANY TO EXACT ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected MANY, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER ONE TO MANY JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected ONE, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER EXACT ONE TO MANY JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected NAME, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER ONE TO ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected ONE, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER EXACT ONE TO ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected NAME, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER ONE TO EXACT ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected ONE, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER EXACT ONE TO EXACT ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected NAME, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER EXACT ONE TO EXACT ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT, "HXE"."ADT"."CUSTOMER1" as a INNER EXACT ONE TO EXACT ONE JOIN "HXE"."ADT"."CUSTOMER1" as b ON a.C_MKTSEGMENT=b.C_MKTSEGMENT;
+sql script syntax error at(0,49): syntax error, unexpected NAME, expecting JOIN
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_ref> ::= <joined_table> 
+
+<joined_table> ::= 
+ <table_expression> [ <join_type> ] [ <join_cardinality> ] JOIN <table_expression> ON <predicate>
+ 
+<join_type> ::= { INNER | { LEFT | RIGHT | FULL } [ OUTER ] }
+
+<join_cardinality> ::= { MANY TO MANY
+ | MANY TO ONE
+ | MANY TO EXACT ONE
+ | ONE TO MANY
+ | EXACT ONE TO MANY
+ | ONE TO ONE
+ | EXACT ONE TO ONE
+ | ONE TO EXACT ONE
+ | EXACT ONE TO EXACT ONE }
+---------------------------------------------------------------------------------------
+
+
+
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER MANY TO ONE CASE JOIN when a.C_CUSTKEY='plmkijasdt7777asda' then return (b.CUSTOMER_ID bID,b.C_CUSTKEY bkey,b.C_MKTSEGMENT bMKT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY when a.CUSTOMER_ID=6 then return (b.CUSTOMER_ID,b.C_CUSTKEY,b.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY END;
+sql script syntax error at(0,66): syntax error, unexpected CASE, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER MANY TO ONE CASE JOIN when a.C_CUSTKEY='plmkijasdt7777asda' then return (b.CUSTOMER_ID bID,b.C_CUSTKEY bkey,b.C_MKTSEGMENT bMKT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY when a.CUSTOMER_ID=6 then return (b.CUSTOMER_ID,b.C_CUSTKEY,b.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY else return (c.CUSTOMER_ID,c.C_CUSTKEY,c.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as c on a.C_CUSTKEY=c.C_CUSTKEY END;
+sql script syntax error at(0,66): syntax error, unexpected CASE, expecting JOIN
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER MANY TO ONE CASE JOIN when a.C_CUSTKEY='plmkijasdt7777asda' then return (b.CUSTOMER_ID bID,b.C_CUSTKEY bkey,b.C_MKTSEGMENT bMKT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY when a.CUSTOMER_ID=6 then return (b.CUSTOMER_ID,b.C_CUSTKEY,b.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY else return (c.CUSTOMER_ID,c.C_CUSTKEY,c.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as c on a.C_CUSTKEY=c.C_CUSTKEY END, "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER MANY TO ONE CASE JOIN when a.C_CUSTKEY='plmkijasdt7777asda' then return (b.CUSTOMER_ID bID,b.C_CUSTKEY bkey,b.C_MKTSEGMENT bMKT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY when a.CUSTOMER_ID=6 then return (b.CUSTOMER_ID,b.C_CUSTKEY,b.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as b on a.C_CUSTKEY=b.C_CUSTKEY else return (c.CUSTOMER_ID,c.C_CUSTKEY,c.C_MKTSEGMENT) from "HXE"."ADT"."PTA" as c on a.C_CUSTKEY=c.C_CUSTKEY END;
+sql script syntax error at(0,66): syntax error, unexpected CASE, expecting JOIN
+INDEX:1
+---------------------------------------------------------------------------------------
+<from_clause> ::= FROM <table_expression> [, <table_expression> ...]
+
+<table_expression> ::= 
+ <joined_table> 
+
+<joined_table> ::= 
+ <case_join>
+ 
+<case_join> ::= <table_0> LEFT OUTER MANY TO ONE CASE JOIN   
+   WHEN <condition_predicate_1> THEN RETURN <output_column_list_1> FROM <table_1> ON <join_predicate_1>
+   ...
+   WHEN <condition_predicate_N> THEN RETURN <output_column_list_N> FROM <table_N> ON <join_predicate_N>   
+  [ ELSE RETURN <output_column_list_N+1> FROM <table_N+1> ON <join_predicate_N+1>]
+ END 
+
+For each row in <table_0> , the first satisfied WHEN clause will be joined with the table in the THEN clause.
+
+In the THEN clause,<table_1> represents the joined table name, and <output_column_list_1> represents the projection 
+columns as a result of the join. <table_1> and <output_column_list_1> must have the same number of columns or an error is returned.
+---------------------------------------------------------------------------------------
+
+select * from "HXE"."ADT"."CUSTOMER1" as a CROSS JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b);
+sql script syntax error at(0,61): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a, LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b);
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b) b ON b.C_CUSTKEY=a.C_CUSTKEY;
+sql script syntax error at(0,55): syntax error, unexpected '('
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a INNER JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b) b ON b.C_CUSTKEY=a.C_CUSTKEY;
+sql script syntax error at(0,61): syntax error, unexpected '('
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b) b ON b.C_CUSTKEY=a.C_CUSTKEY;
+sql script syntax error at(0,60): syntax error, unexpected '('
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b) b ON b.C_CUSTKEY=a.C_CUSTKEY;
+sql script syntax error at(0,66): syntax error, unexpected '('
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a LEFT OUTER JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as b) b ON b.C_CUSTKEY=a.C_CUSTKEY, "HXE"."ADT"."CUSTOMER1" as c LEFT OUTER JOIN LATERAL(select * from "HXE"."ADT"."CUSTOMER1" as d) d ON d.C_CUSTKEY=c.C_CUSTKEY;
+sql script syntax error at(0,66): syntax error, unexpected '('
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <lateral_table_expression>
+
+Allows correlation between table subqueries in the context join operation.
+<lateral_table_expression> ::= LATERAL ( { <subquery> } )
+Lateral joins are only supported for CROSS PRODUCT, INNER JOING and LEFT OUTER JOIN.
+
+<subquery> ::= ( <select_statement> )[ [ AS ] <subquery_alias> ] 
+
+<subquery_alias> ::= <identifier>
+---------------------------------------------------------------------------------------
+
+
+
+select * from "HXE"."ADT"."CUSTOMER1" as a, LATERAL(TAUDF());
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a, LATERAL(ADT.TAUDF());
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a, LATERAL("HXE"."ADT"."TAUDF"());
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."CUSTOMER1" as a, LATERAL("HXE"."ADT"."TAUDF"(5));
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <lateral_table_expression>
+
+Allows correlation between table subqueries in the context join operation.
+<lateral_table_expression> ::= LATERAL ( { <function_reference> } )
+
+<function_reference> ::= <function_name>( <proc_arg_list> | <opt_parameter_key_value_list> )
+<proc_arg_list> and <opt_parameter_key_value_list> are the allowable arguments and parameters for the function.
+
+<function_name> ::= [[<database_name>.]<schema.name>.]<function.identifier>
+---------------------------------------------------------------------------------------
+
+
+
+select * from UNNEST(ARRAY(1)) as b;
+sql script syntax error at(0,51): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from UNNEST(ARRAY('a')) as b;
+sql script syntax error at(0,20): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from UNNEST(ARRAY(1,2,3)) as b;
+sql script syntax error at(0,20): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from UNNEST(ARRAY('a','b','c')) as b;
+sql script syntax error at(0,20): syntax error, unexpected '(', expecting END_P
+INDEX:1
+WITH a as (select C_CUSTKEY from ADT.CUSTOMER3) select * from unnest(a.C_CUSTKEY) as b;
+sql script syntax error at(0,68): syntax error, unexpected '(', expecting END_P
+INDEX:1
+WITH a as (select * from ADT.CUSTOMER3) select * from unnest(array(a.CUSTOMER_ID)) as b;
+sql script syntax error at(0,60): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from ADT.CUSTOMER3 as a cross join UNNEST(a.C_CUSTKEY) as b;
+sql script syntax error at(0,50): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from ADT.CUSTOMER3 as a join UNNEST(a.C_CUSTKEY) as b on 1=1;
+sql script syntax error at(0,44): syntax error, unexpected '('
+INDEX:1
+select * from ADT.CUSTOMER3 as a join UNNEST(a.C_CUSTKEY) WITH ORDINALITY as b on 1=1;
+sql script syntax error at(0,44): syntax error, unexpected '('
+INDEX:1
+select * from ADT.CUSTOMER3 as a join UNNEST(a.C_CUSTKEY) WITH ORDINALITY as b(C_PRIVILEGE_LEVEL) on 1=1;
+sql script syntax error at(0,44): syntax error, unexpected '('
+INDEX:1
+select * from ADT.CUSTOMER3 as a join UNNEST(a.C_CUSTKEY) WITH ORDINALITY as b(C_PRIVILEGE_LEVEL) on 1=1, ADT.CUSTOMER3 as c join UNNEST(c.C_CUSTKEY) WITH ORDINALITY as d(C_PRIVILEGE_LEVEL) on 1=1;
+sql script syntax error at(0,44): syntax error, unexpected '('
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <collection_derived_table>
+
+<collection_derived_table> ::= 
+ UNNEST ( <collection_value_expression> [ {, <collection_value_expression> }...] ) 
+   [ WITH ORDINALITY ] AS <table_alias> [ <derived_column_list> ]
+
+<collection_value_expression> ::= 
+ ARRAY ( <table_expression> [ {, <table_expression> }...] | <column_name> )
+
+<derived_column_list> ::= ( <column_name>, ... )
+---------------------------------------------------------------------------------------
+
+
+
+select * from "TAUDF"();
+sql script syntax error at(0,21): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "ADT"."TAUDF"();
+sql script syntax error at(0,27): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."TAUDF"();
+sql script syntax error at(0,33): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."TAUDF"(5);
+sql script syntax error at(0,33): syntax error, unexpected '(', expecting END_P
+INDEX:1
+select * from "HXE"."ADT"."TAUDF"(5),"HXE"."ADT"."TAUDF"(5);
+sql script syntax error at(0,33): syntax error, unexpected '(', expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <function_reference>
+
+<function_reference> ::= <function_name>( <proc_arg_list> | <opt_parameter_key_value_list> )
+<proc_arg_list> and <opt_parameter_key_value_list> are the allowable arguments and parameters for the function.
+
+<function_name> ::= [[<database_name>.]<schema.name>.]<function.identifier>
+---------------------------------------------------------------------------------------
+
+
+
+select * from "ADT"."JSONTA" where "address"={"street": 'Dietmar-Hopp-Allee', "city": 'Heidelberg'};
+sql script syntax error at(0,45): syntax error, unexpected '{'
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <JSON_collection_table>
+
+example from HANA official, https://help.sap.com/viewer/4fe29514fd584807ac9f2a04f6754767/2.0.04/en-US/77c6ae0496894c2eab5f12473e52175b.html
+SELECT { "a1" : 10 }, { "a2" : "k1" } 
+FROM COL000
+WHERE "k1" = { "k2" : 30 }; 
+---------------------------------------------------------------------------------------
+
+
+
+select * from :ta;
+[SQL-Lexer-Error] Unknown Character: :
+sql script syntax error at(0,14): syntax error, unexpected ERROR
+INDEX:1
+---------------------------------------------------------------------------------------
+<table_expression> ::=  :<table_variable>
+
+example from jeff, haha
+---------------------------------------------------------------------------------------
+
+
+
+select * from ADT.ASOTA:b;
+[SQL-Lexer-Error] Unknown Character: :
+sql script syntax error at(0,23): syntax error, unexpected ERROR, expecting END_P
+INDEX:1
+select * from ADT.ASOTA[customer_id<10]:b;
+[SQL-Lexer-Error] Unknown Character: :
+sql script syntax error at(0,39): syntax error, unexpected ERROR, expecting END_P
+INDEX:1
+select * from ADT.ASOTA[customer_id<(5+5)]:b;
+[SQL-Lexer-Error] Unknown Character: :
+sql script syntax error at(0,42): syntax error, unexpected ERROR, expecting END_P
+INDEX:1
+other cases,
+select * from ADT.ASOTA[customer_id<(5+5)]:b;
+select * from ADT.ASOTA[not customer_id<(5+5)]:b;
+select * from ADT.ASOTA[customer_id<10 and customer_id>1]:b;
+select * from ADT.ASOTA[customer_id<2 or customer_id>9]:b;
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using to one join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using to many join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using one to one join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using one to many join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using many to one join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using many to many join];
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using many to many join].b;
+select * from ADT.ASOTA[customer_id<10]:b[customer_id<9 using many to many join].b[customer_id<3 using many to many join], ADT.ASOTA;
+---------------------------------------------------------------------------------------
+<table_expression> ::=  <associated_table_expression>
+
+<associated_table_expression> ::=
+ <associated_table_name>[ [<condition>]]:<associated_ref>[.<associated_ref>[...] ]
+<associated_ref> ::= <column_name>[ [<condition> [ <association_cardinality> ] ] ]
+
+<association_cardinality> ::= USING [ ONE | MANY ] TO { ONE | MANY } JOIN
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, BINNING(VALUE => b.customer_id, BIN_COUNT => 4) OVER () AS bin_num from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected COMP_EQ, expecting ')'
+INDEX:1
+select b.customer_id, LAG(b.c_custkey) over(order by b.customer_id ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,39): syntax error, unexpected OVER, expecting FROM
+INDEX:1
+select b.customer_id, LEAD(b.c_custkey) over(order by b.customer_id ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,40): syntax error, unexpected OVER, expecting FROM
+INDEX:1
+select b.customer_id, RANDOM_PARTITION(5,2,3,0) OVER (ORDER BY b.customer_id) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,48): syntax error, unexpected OVER, expecting FROM
+INDEX:1
+select b.customer_id, WEIGHTED_AVG(b.customer_id) over (order by b.C_PRIVILEGE_LEVEL) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,50): syntax error, unexpected OVER, expecting FROM
+INDEX:1
+---------------------------------------------------------------------------------------
+BINNING( <binning_param> => <expression> [ {, <binning_parameter> => <expression> } ... ] ) <window_specification>
+
+
+
+<binning_param> ::= VALUE | BIN_COUNT | BIN_WIDTH | TILE_COUNT | STDDEV_COUNT
+
+<window_specification> ::= OVER ( { [ <window_partition_by_clause> ] [ <window_order_by_clause> ] [ <window_frame_clause> ] } )
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, char(97) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,22): syntax error, unexpected CHAR
+INDEX:1
+---------------------------------------------------------------------------------------
+CHAR(<number>)
+
+Example, 
+SELECT CHAR (65) || CHAR (110) || CHAR (116) "character" FROM DUMMY;
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, EXTRACT( YEAR FROM current_date ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected FROM, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+EXTRACT( {YEAR | MONTH | DAY | HOUR | MINUTE | SECOND} FROM <date> )
+
+Example, 
+SELECT EXTRACT (YEAR FROM TO_DATE ('2010-01-04', 'YYYY-MM-DD')) "extract" FROM DUMMY;
+---------------------------------------------------------------------------------------
+
+
+select FIRST_VALUE( b.customer_id order by b.customer_id ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+---------------------------------------------------------------------------------------
+FIRST_VALUE( <expression> <order_by_clause> )
+
+Example, 
+SELECT FIRST_VALUE (COL1 ORDER BY COL2) FROM T;
+---------------------------------------------------------------------------------------
+
+
+SELECT * FROM JSON_TABLE(ADT.JSONTA2.B,'$.LineItems[*]' columns(AD varchar(50) path '$.ItemNumber')) as jt;
+sql script syntax error at(0,24): syntax error, unexpected '(', expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+JSON_TABLE(
+ <JSON_API_common_syntax>
+ <JSON_table_columns_clause>
+ [ <JSON_table_error_behavior> ON ERROR ]
+ )
+ 
+<JSON_API_common_syntax> ::= <JSON_context_item>, <JSON_path_specification>
+
+<JSON_path_specification> ::= <JSON_path_mode> <JSON_path_wff>
+
+<JSON_path_mode> ::= STRICT | LAX
+
+<JSON_context_item>
+Specifies the JSON document to operate on, such as a table column, string, or collection.
+
+<JSON_path_specification>
+Specifies the path to <JSON_context_item>.
+
+<JSON_path_wff> indicates an actual JSON path (for example, '$.item1'). <JSON_path_specification> does not use double quotes.
+
+<JSON_table_columns_clause> ::= 
+ COLUMNS ( <JSON_table_column_definition> [,... ] )
+---------------------------------------------------------------------------------------
+
+
+
+select LAST_VALUE (b.customer_id ORDER BY b.customer_id) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,33): syntax error, unexpected ORDER, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+LAST_VALUE( <expression> <order_by_clause> )
+
+<order_by_clause> ::= ORDER BY <order_by_expression> [, <order_by_expression> [,...] ]
+
+<order_by_expression> ::= 
+ <column_name> 
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, LEFT(b.c_custkey,4) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,27): syntax error, unexpected NAME, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+LEFT(<string>, <number>)
+
+Example, 
+SELECT LEFT ('Hello', 3) "left" FROM DUMMY;
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, LOCATE_REGEXPR( '[^j7d]a' in b.c_custkey ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,48): syntax error, unexpected IN, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+LOCATE_REGEXPR(  <pattern> 
+   IN <regex_subject_string> 
+)
+
+<pattern>
+A search pattern based on Perl Compatible Regular Expression (PCRE).
+
+<regex_subject_string>
+<regex_subject_string> ::= <string>
+Specifies a string in which to search for the regular expression pattern.
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, NCHAR(97) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,22): syntax error, unexpected NCHAR
+INDEX:1
+---------------------------------------------------------------------------------------
+NCHAR(<number>)
+
+Example
+SELECT NCHAR (65) "nchar" FROM DUMMY;
+---------------------------------------------------------------------------------------
+
+
+
+select NTH_VALUE( b.customer_id, 50 order by b.C_PRIVILEGE_LEVEL ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected ORDER, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+NTH_VALUE( <expression>, <position> <order_by_clause> )
+
+<position>
+Specifies the position of the element in <expression>.
+
+<order_by_clause>
+Specifies the sort order of the input rows.
+
+<order_by_clause> ::= ORDER BY <order_by_expression>
+
+<order_by_expression> ::= 
+ <column_name> 
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id,  NTILE(3) OVER (PARTITION BY b.C_MKTSEGMENT ORDER BY b.customer_id) AS NTILE from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,32): syntax error, unexpected OVER, expecting FROM
+INDEX:1
+---------------------------------------------------------------------------------------
+NTILE( <number_of_buckets> ) <window_specification>
+
+<number_of_buckets>
+Specifies the number of buckets to distribute rows to.
+
+Example
+SELECT NTILE(val, 4) OVER (PARTITION BY class ORDER BY val) AS nth FROM T;
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, OCCURRENCES_REGEXPR( 'a' IN b.c_custkey) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,47): syntax error, unexpected IN, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+OCCURRENCES_REGEXPR( <pattern> IN <regex_subject_string> )
+
+<pattern>
+Specifies a search pattern based on Perl Compatible Regular Expression (PCRE).
+
+<regex_subject_string>
+Specifies the string to search within. If <regex_subject_string> is empty, then the result is empty.
+
+<regex_subject_string> ::= <string>
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, PERCENTILE_CONT(0.125) WITHIN GROUP (ORDER BY b.customer_id) OVER (PARTITION BY b.c_custkey) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,52): syntax error, unexpected GROUP, expecting FROM
+INDEX:1
+---------------------------------------------------------------------------------------
+PERCENTILE_CONT( <constant_literal> ) WITHIN GROUP ( ORDER BY <expression> ) <window_specification>
+
+Example
+Select PERCENTILE_CONT(0.875) WITHIN GROUP (ORDER BY val) OVER (PARTITION BY class) AS pc3 FROM p_cont;
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, PERCENTILE_DISC(0.125) WITHIN GROUP (ORDER BY b.customer_id) OVER (PARTITION BY b.c_custkey) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,52): syntax error, unexpected GROUP, expecting FROM
+INDEX:1
+---------------------------------------------------------------------------------------
+PERCENTILE_DISC( <constant_literal> ) WITHIN GROUP ( ORDER BY <expression> ) <window_specification>
+
+Example
+Select PERCENTILE_DISC(0.875) WITHIN GROUP (ORDER BY val) OVER (PARTITION BY class) AS pd3 FROM p_disc;
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, REPLACE_REGEXPR('r.t' IN b.C_MKTSEGMENT WITH '999') from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,44): syntax error, unexpected IN, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+REPLACE_REGEXPR(<pattern> 
+ IN <regex_subject_string> )
+ 
+<pattern>
+Specifies a search pattern based on Perl Compatible Regular Expression (PCRE).
+
+<regex_subject_string>
+Specifies the string that the search pattern should be applied to. If <regex_subject_string> is empty, the result is empty.
+
+<regex_subject_string> ::= <string_literal>
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, RIGHT(b.C_MKTSEGMENT, 4) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,28): syntax error, unexpected NAME, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+RIGHT(<string>, <number>)
+
+<string>
+Specifies the string to be operated on.
+
+<number>
+Specifies the length of characters or bytes to return, starting from the right side.
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, SERIES_FILTER(VALUE => b.customer_id, METHOD_NAME => 'SINGLESMOOTH', ALPHA => 0.2) OVER (ORDER BY b.customer_id) AS SES from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,42): syntax error, unexpected COMP_EQ, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+SERIES_FILTER(<filter_parameter> => <expression> [, <filter_parameter> => <expression> ... ])
+ OVER (
+   [ <series_definition> | <series_reference> ]
+   [ <window_partition_by_clause> ]
+   [ ORDER BY <window_order_by_expression> ]
+   [ <window_frame_clause> ]
+      )
+
+Example	  
+Select SERIES_FILTER(VALUE => temperature, METHOD_NAME => 'DOUBLESMOOTH', ALPHA => 0.2, BETA => 0.3) OVER (ORDER BY ts) AS DES FROM weather;
+---------------------------------------------------------------------------------------
+
+
+
+select STRING_AGG(b.customer_id,',' order by b.c_privilege) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected ORDER, expecting ')'
+INDEX:1
+select STRING_AGG(b.customer_id,',' order by b.c_privilege asc) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected ORDER, expecting ')'
+INDEX:1
+select STRING_AGG(b.customer_id,',' order by b.c_privilege desc) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,36): syntax error, unexpected ORDER, expecting ')'
+INDEX:1
+other cases,
+select STRING_AGG(b.customer_id,',' order by b.c_privilege_level desc nulls first) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+select STRING_AGG(b.customer_id,',' order by b.c_privilege_level desc nulls last) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+---------------------------------------------------------------------------------------
+STRING_AGG( <expression>[, <delimiter> ] [ <order_by_clause> ] )
+
+<expression>
+Specifies a VARCHAR or NVARCHAR expression with values to be concatenated. If the input values are a different data type than VARCHAR or NVARCHAR, then implicit casting is attempted.
+
+For example, if the NUM column has five integer values (1, 2, 3, 4, 5), then STRING_AGG("NUM",0) returns 102030405.
+
+<delimiter>
+Specifies the character to use as a delimiter when aggregating values.
+
+<order_by_clause>
+Specifies the sort order of the input rows.
+
+<order_by_clause> ::= ORDER BY <order_by_expression> [, <order_by_expression> [,...] ]
+
+<order_by_expression> ::= 
+ <column_name> [ <collate_clause> ] [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] 
+ | <column_position> [ <collate_clause> ] [ ASC | DESC ] [ NULLS FIRST | NULLS LAST ] 
+
+<collate_clause> ::= COLLATE <collation_name>
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, SUBSTR_REGEXPR( 'a..a'  IN b.c_custkey ) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,46): syntax error, unexpected IN, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+SUBSTR[ING]_REGEXPR( <pattern> IN <regex_subject_string> )
+
+<pattern>
+Specifies a search pattern based on Perl Compatible Regular Expression (PCRE).
+---------------------------------------------------------------------------------------
+
+
+
+select b.customer_id, TRIM('dapl' from b.c_custkey) from "HXE"."ADT"."CUSTOMER1" as b, "HXE"."ADT"."CUSTOMER1" as c;
+sql script syntax error at(0,34): syntax error, unexpected FROM, expecting ')'
+INDEX:1
+---------------------------------------------------------------------------------------
+TRIM([ <trim_char> FROM] <string> )
+
+<trim_char>
+Specifies the characters to be removed from a string.
+
+Example
+SELECT TRIM ('a' FROM 'aaa123456789aa') "trim both" FROM DUMMY;
+---------------------------------------------------------------------------------------
+
+
+
+select * from XMLTABLE(XMLNAMESPACE('http://www.namespace.com/name' AS 'myns2' DEFAULT 'http://www.sap.com/xmltable'),'/doc/item' PASSING'<sap:doc xmlns:sap="http://www.sap.com/xmltable" xmlns:ns="http://www.namespace.com/name">  <sap:item><sap:id>1</sap:id><ns:name>Box</ns:name></sap:item>  <sap:item><sap:id>2</sap:id><ns:name>Jar</ns:name></sap:item></sap:doc>'COLUMNS ID INT PATH 'id', NAME VARCHAR(20) PATH 'myns2:name');
+sql script syntax error at(0,22): syntax error, unexpected '(', expecting END_P
+INDEX:1
+---------------------------------------------------------------------------------------
+XMLTABLE( [ <XML_namespace_clause>, ]
+ <row_pattern> PASSING <XML_argument> COLUMNS <column_definitions>
+ <error_option>
+)
+
+Example
+SELECT * FROM
+XMLTABLE(
+XMLNAMESPACE('http://www.namespace.com/name' AS 'myns2' DEFAULT 'http://www.sap.com/xmltable'),
+'/doc/item' PASSING
+'<sap:doc xmlns:sap="http://www.sap.com/xmltable" xmlns:ns="http://www.namespace.com/name">
+  <sap:item><sap:id>1</sap:id><ns:name>Box</ns:name></sap:item>
+  <sap:item><sap:id>2</sap:id><ns:name>Jar</ns:name></sap:item>
+</sap:doc>'
+COLUMNS 
+ID INT PATH 'id', 
+NAME VARCHAR(20) PATH 'myns2:name'
+) AS XTABLE;
+---------------------------------------------------------------------------------------

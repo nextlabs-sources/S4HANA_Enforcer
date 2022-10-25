@@ -1,0 +1,11 @@
+Package: NxlEMSapERP
+Version: 1.0
+Architecture: amd64
+Maintainer: product@nextlabsc.com
+Depends: openssl (>= 1.1)
+Priority: optional
+Homepage: https://www.nextlabs.com/
+Description: Nextlabs Entitle Management for SAP ERP data access. 
+ Nextlabs Entitle Management for SAP ERP data access runs on SAP Application server and do enforcement when SAP Application user access data through SAP client. In this version the only enforcement action is mask. It is said that EMS4H will mask special fields based on the information of SAP Application user.
+Original-Maintainer: product@nextlabsc.com
+

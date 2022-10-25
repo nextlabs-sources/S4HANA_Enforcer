@@ -1,0 +1,60 @@
+{
+	"SERVER": {
+		"host": "192.168.187.160:30215",
+		"db": "D39",
+		"user": "SAPHANADB",
+		"pwd": "Next1234"
+	},
+	"DBLIB": "C:\\usr\\sap\\E99\\hdbclient\\libSQLDBCHDB.dll",
+	"REPEAT": 1,
+	"SQLS": [{
+			"text": "SELECT * FROM DRAW WHERE MANDT=?",
+			"params": [{
+				"name": "1",
+				"value": "100"
+			}],
+			"ignore": true
+		},
+		{
+			"text": "SELECT * FROM T001 WHERE MANDT=? AND LAND1=?",
+			"params": [{
+				"name": "1",
+				"value": "100"
+			}, {
+				"name": "2",
+				"value": "DRAW"
+			}],
+			"ignore": true
+		},
+		{
+			"text": "SELECT DWNAM as SSS, DOKST, 'tttt' AS DWNAM , 'yyyy' AS DOKST ,  CONCAT(DWNAM ,'zzzz') as TEST3,  case when DOKST <> 'TTT' then DOKST else DOKST END as TEST1,  \"LABOR\" || \"DOKST\" as TEST2, ABC.\"DWNAM\" as TEST4 FROM DRAW as ABC WHERE ( \"FILEP1\" <> 'abc' ) AND ( \"DAPPL1\" <> 'sss' ) ORDER BY ABC.DOKST WITH HINT (IGNORE_PLAN_CACHE )",
+			"params": [{
+				"name": "1",
+				"value": "100"
+			}, {
+				"name": "2",
+				"value": "DRAW"
+			}],
+			"ignore": true
+		},
+		{
+			"text": "UPDATE DRAW SET DWNAM=? WHERE DWNAM=? AND 1=1",
+			"params": [{
+				"name": "1",
+				"value": "test"
+			}, {
+				"name": "1",
+				"value": "xS4H_PP111"
+			}],
+			"ignore": false
+		},
+		{
+			"text": "DELETE FROM DRAW WHERE DWNAM=? AND 1=0",
+			"params": [{
+				"name": "1",
+				"value": "S4H_PP111"
+			}],
+			"ignore": false
+		}
+	]
+}

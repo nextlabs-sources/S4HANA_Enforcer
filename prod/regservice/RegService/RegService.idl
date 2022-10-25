@@ -1,0 +1,18 @@
+// RegService.idl : IDL source for RegService
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (RegService.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	uuid(2620B5C7-2D99-4BFF-ABAA-8B3A73F4BD72),
+	version(1.0),
+]
+library RegServiceLib
+{
+	importlib("stdole2.tlb");
+};
+

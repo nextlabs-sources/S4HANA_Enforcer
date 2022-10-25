@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="JSONCPP"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\jsoncpp\;CMake Files\jsoncpp\pkg-config\;CMake Files\jsoncpp\src\;CMake Files\jsoncpp\src\lib_json\;CMake Files\jsoncpp\include\;CMake Files\tool\;CMake Files\empolicymgr\;CMake Files\hdb_new\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/jeff/s4hana_enforcer/prod/jsoncpp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jsoncpp_lib">
+				<Option output="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/libjsoncpp.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/include"/>
+					<Add directory="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/../../include"/>
+					<Add directory="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 jsoncpp_lib"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="jsoncpp_lib/fast">
+				<Option output="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/libjsoncpp.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/include"/>
+					<Add directory="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/../../include"/>
+					<Add directory="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 jsoncpp_lib/fast"/>
+					<CompileFile command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -f &quot;/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/assertions.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/config.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/forwards.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/json_features.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/reader.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/value.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/version.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/json/writer.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/json_reader.cpp">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/json_tool.h">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/json_value.cpp">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/json_valueiterator.inl">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/json_writer.cpp">
+			<Option target="jsoncpp_lib"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\jsoncpp\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/version.in">
+			<Option virtualFolder="CMake Files\jsoncpp\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/pkg-config/jsoncpp.pc.in">
+			<Option virtualFolder="CMake Files\jsoncpp\pkg-config\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\jsoncpp\src\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/src/lib_json/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\jsoncpp\src\lib_json\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/jsoncpp/include/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\jsoncpp\include\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/tool/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\tool\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/empolicymgr/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\empolicymgr\"/>
+		</Unit>
+		<Unit filename="/home/jeff/s4hana_enforcer/prod/hdb_new/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\hdb_new\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

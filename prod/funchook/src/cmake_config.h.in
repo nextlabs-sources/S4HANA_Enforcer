@@ -1,0 +1,2 @@
+#cmakedefine _GNU_SOURCE
+
